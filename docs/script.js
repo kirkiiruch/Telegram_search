@@ -14,7 +14,7 @@ fetch('products.json')
     .then(data => {
         fuse = new Fuse(data, {
             keys: ['name'],
-            threshold: 0.8,
+            threshold: 1.0,
             ignoreLocation: true,
             includeScore: true,
             // Используем tokenSort для игнорирования порядка символов
