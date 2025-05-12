@@ -14,15 +14,13 @@ fetch('products.json')
     .then(data => {
         fuse = new Fuse(data, {
             keys: ['name'],
-            threshold: 1.0,
+            threshold: 0.3, // Установим более низкий порог для более точных совпадений
             ignoreLocation: true,
             includeScore: true,
-            // Используем tokenSort для игнорирования порядка символов
             shouldSort: true,
             getFn: (obj, path) => normalizeText(obj[path]), // Нормализуем текст перед поиском
         });
 
-        // Можно запустить начальную функцию, если нужно
         console.log("Данные загружены:", data);
     })
     .catch(error => {
@@ -45,8 +43,11 @@ function searchProducts() {
 
     // Нормализуем запрос перед поиском
     const normalizedQuery = normalizeText(query);
+    console.log("Нормализованный запрос:", normalizedQuery);  // Печатаем нормализованный запрос
 
     const results = fuse.search(normalizedQuery);
+    console.log("Результаты поиска:", results);  // Печатаем все результаты с точкой совпадения
+
     if (results.length === 0) {
         resultsDiv.innerHTML = "<p>Товары не найдены.</p>";
         return;
