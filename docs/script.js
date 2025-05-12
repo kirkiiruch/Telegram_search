@@ -12,9 +12,14 @@ function normalizeText(text) {
 fetch('products.json')
     .then(response => response.json())
     .then(data => {
+        // Нормализуем данные перед созданием поискового индекса
+        data.forEach(product => {
+            console.log("Нормализованное имя продукта:", normalizeText(product.name));
+        });
+
         fuse = new Fuse(data, {
             keys: ['name'],
-            threshold: 0.3, // Установим более низкий порог для более точных совпадений
+            threshold: 0.3, // Порог совпадений
             ignoreLocation: true,
             includeScore: true,
             shouldSort: true,
@@ -56,6 +61,7 @@ function searchProducts() {
     resultsDiv.innerHTML = "";
     results.forEach((result, index) => {
         const product = result.item;
+        console.log(`Результат ${index + 1}:`, result.score); // Выводим точность совпадения для каждого товара
         const productDiv = document.createElement("div");
         productDiv.className = "product";
         productDiv.innerHTML = `
