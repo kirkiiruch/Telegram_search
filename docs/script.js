@@ -6,7 +6,7 @@ fetch('products.json')
     .then(data => {
         fuse = new Fuse(data, {
             keys: ['name'],
-            threshold: 0.4,
+            threshold: 0.8,
             ignoreLocation: true,
             includeScore: true
         });
