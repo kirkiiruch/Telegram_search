@@ -1,6 +1,14 @@
 // Пример данных, замените на реальные данные с вашего сервера или API
 let fuse;
 
+// Функция для нормализации текста (удаляет спецсимволы и приводит символы с акцентами к базовым)
+function normalizeText(text) {
+    // Приводим к нижнему регистру и удаляем спецсимволы
+    text = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Удаляем все символы, кроме букв и цифр
+    return text.replace(/[^a-z0-9]/g, "");
+}
+
 fetch('products.json')
     .then(response => response.json())
     .then(data => {
@@ -8,7 +16,10 @@ fetch('products.json')
             keys: ['name'],
             threshold: 0.8,
             ignoreLocation: true,
-            includeScore: true
+            includeScore: true,
+            // Используем tokenSort для игнорирования порядка символов
+            shouldSort: true,
+            getFn: (obj, path) => normalizeText(obj[path]), // Нормализуем текст перед поиском
         });
 
         // Можно запустить начальную функцию, если нужно
@@ -19,7 +30,7 @@ fetch('products.json')
     });
 
 function searchProducts() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
+    const query = document.getElementById("searchInput").value;
     const resultsDiv = document.getElementById("results");
 
     if (!fuse) {
@@ -32,7 +43,10 @@ function searchProducts() {
         return;
     }
 
-    const results = fuse.search(query);
+    // Нормализуем запрос перед поиском
+    const normalizedQuery = normalizeText(query);
+
+    const results = fuse.search(normalizedQuery);
     if (results.length === 0) {
         resultsDiv.innerHTML = "<p>Товары не найдены.</p>";
         return;
@@ -54,4 +68,3 @@ function searchProducts() {
         resultsDiv.appendChild(productDiv);
     });
 }
-
